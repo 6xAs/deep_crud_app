@@ -5,9 +5,11 @@ class UserModel:
         self.users = pd.DataFrame(columns=['id', 'name', 'email'])
         
     def create_user(self, name, email):
+        # Cria um novo usuário e adiciona ao DataFrame
         new_user = pd.DataFrame([[len(self.users), name, email]], columns=['id', 'name', 'email'])
-        
+        # Concatena o novo usuário ao DataFrame existente
         self.users = pd.concat([self.users, new_user], ignore_index=True)
+        # Retorna o novo usuário criado
         return new_user
     
     def read_users(self):
@@ -23,7 +25,9 @@ class UserModel:
         return None
     
     def delete_user(self, user_id):
+        # Verifica se o usuário existe antes de tentar excluir
         if user_id in self.users['id'].values:
+            # Remove o usuário da lista de usuários
             self.users = self.users[self.users['id'] != user_id]
             return True
         return False
