@@ -11,6 +11,7 @@ class UserView:
         st.write(users)
     
     def create_user_form(self):
+        # Formulário para criar um novo usuário
         with st.form("create_user_form"):
             # Campos para criar um novo usuário
             name = st.text_input("Name")
