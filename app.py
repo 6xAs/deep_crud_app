@@ -1,6 +1,12 @@
 import streamlit as st
 from views.UserView import UserView
 
+st.set_page_config(
+    page_title="Hello",
+    page_icon="🏠",
+    layout="wide",
+)
+
 def main():
     st.sidebar.title("Menu de Navegação")
     page = st.sidebar.radio("Selecione a página:", ["Listar Usuários", "Cadastrar Usuário", "Editar Usuário", "Excluir Usuário"])
