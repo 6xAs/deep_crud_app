@@ -1,34 +1,38 @@
 import pandas as pd
+import streamlit as st
 
 class UserModel:
     def __init__(self):
-        self.users = pd.DataFrame(columns=['id', 'name', 'email'])
-        
-    def create_user(self, name, email):
-        # Cria um novo usuário e adiciona ao DataFrame
-        new_user = pd.DataFrame([[len(self.users), name, email]], columns=['id', 'name', 'email'])
-        # Concatena o novo usuário ao DataFrame existente
-        self.users = pd.concat([self.users, new_user], ignore_index=True)
-        # Retorna o novo usuário criado
+        if 'users' not in st.session_state:
+            st.session_state.users = pd.DataFrame(columns=['id', 'name', 'email', 'age'])
+    
+    def create_user(self, name, email, age):
+        # Gera um novo ID único para o novo usuário
+        new_id = len(st.session_state.users) + 1
+        # Cria um novo DataFrame com os dados do novo usuário
+        new_user = pd.DataFrame([[new_id, name, email, age]], columns=['id', 'name', 'email', 'age'])
+        # Adiciona o novo usuário ao DataFrame existente
+        st.session_state.users = pd.concat([st.session_state.users, new_user], ignore_index=True)
         return new_user
     
     def read_users(self):
-        return self.users
-
-    def update_user(self, user_id, name=None, email=None):
-        if user_id in self.users['id'].values:
-            if name:
-                self.users.loc[self.users['id'] == user_id, 'name'] = name
-            if email:
-                self.users.loc[self.users['id'] == user_id, 'email'] = email
-            return self.users.loc[self.users['id'] == user_id]
-        return None
+        return st.session_state.users
     
-    def delete_user(self, user_id):
-        # Verifica se o usuário existe antes de tentar excluir
-        if user_id in self.users['id'].values:
-            # Remove o usuário da lista de usuários
-            self.users = self.users[self.users['id'] != user_id]
+    def update_user(self, user_id, name=None, email=None, age=None):
+        if user_id in st.session_state.users['id'].values:
+            idx = st.session_state.users.index[st.session_state.users['id'] == user_id].tolist()[0]
+            if name:
+                st.session_state.users.at[idx, 'name'] = name
+            if email:
+                st.session_state.users.at[idx, 'email'] = email
+            if age:
+                st.session_state.users.at[idx, 'age'] = age
             return True
         return False
-        
+    
+    def delete_user(self, user_id):
+        if user_id in st.session_state.users['id'].values:
+            st.session_state.users = st.session_state.users[st.session_state.users['id'] != user_id]
+            st.session_state.users.reset_index(drop=True, inplace=True)
+            return True
+        return False

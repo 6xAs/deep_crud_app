@@ -1,49 +1,58 @@
-# responsável por exibir os dados e interagir com o usuário:
+# views/user_view.py
 import streamlit as st
 from controllers.UserController import UserController
 
 class UserView:
     def __init__(self):
-        self.user_controller = UserController()
+        self.controller = UserController()
     
     def show_users(self):
-        users = self.user_controller.read_users()
-        st.write(users)
+        users = self.controller.read_users()
+        if not users.empty:
+            st.dataframe(users)
+        else:
+            st.info("Nenhum usuário cadastrado!")
     
     def create_user_form(self):
-        # Formulário para criar um novo usuário
         with st.form("create_user_form"):
-            # Campos para criar um novo usuário
-            name = st.text_input("Name")
-            email = st.text_input("Email")
-            # Botão para criar o usuário
-            submit = st.form_submit_button("Criar Usuário")
-            # Se o botão for clicado, cria o usuário
-            if submit:
-                self.user_controller.create_user(name, email)
-                st.success("Usuário criado com sucesso!")
-    
-    def update_user_form(self):
-        # Campos para atualizar um usuário existente pelo ID
-        user_id = st.number_input("User ID to Update", min_value=1)
-        name = st.text_input("Name")
-        email = st.text_input("Email")
-        # Botão para atualizar o usuário
-        if st.button("Atualizar Usuário"):
-            result = self.user_controller.update_user(user_id, name, email)
-            if result is not None:
-                st.success("Usuário atualizado com sucesso!")
-            else:
-                st.error("Usuário não encontrado!")
-                
-    def delete_user_form(self):
-        # Campo para excluir um usuário pelo ID
-        user_id     = st.number_input("User ID to Delete", min_value=1)
-        if st.button("Deletar Usuário"):
-            # Chamada ao método delete_user do controlador
-            result      = self.user_controller.delete_user(user_id)
-            if result:
-                st.success("Usuário excluído com sucesso!")
-            else:
-                st.error("Usuário não encontrado!")
+            name = st.text_input("Nome completo")
+            email = st.text_input("E-mail")
+            age = st.number_input("Idade", min_value=0, max_value=120)
+            submitted = st.form_submit_button("Cadastrar")
+            
+            if submitted:
+                # Validação simples (exemplo)
+                if not name or not email:
+                    st.error("Preencha nome e e-mail!")
+                else:
+                    self.controller.create_user(name, email, age)
+                    st.success("Usuário cadastrado com sucesso!")
         
+    def update_user_form(self):
+        with st.form("update_user_form"):
+            user_id = st.number_input("ID do usuário", min_value=1)
+            name = st.text_input("Novo nome")
+            email = st.text_input("Novo e-mail")
+            age = st.number_input("Nova idade", min_value=0, max_value=120)
+            submitted = st.form_submit_button("Atualizar")
+            
+            if submitted:
+                success = self.controller.update_user(user_id, name, email, age)
+                if success:
+                    st.success("Usuário atualizado!")
+                    #st.rerun()
+                else:
+                    st.error("ID não encontrado!")
+    
+    def delete_user_form(self):
+        with st.form("delete_user_form"):
+            user_id = st.number_input("ID do usuário", min_value=1)
+            submitted = st.form_submit_button("Excluir")
+            
+            if submitted:
+                success = self.controller.delete_user(user_id)
+                if success:
+                    st.success("Usuário excluído!")
+                    #st.rerun()
+                else:
+                    st.error("ID não encontrado!")

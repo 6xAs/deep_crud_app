@@ -1,19 +1,27 @@
 import streamlit as st
 from views.UserView import UserView
 
-# Configuração da página
-st.set_page_config(page_title="Deep CRUD App")
-
-st.sidebar.title("Navigation")
-selection = st.sidebar.radio("Go to", ["Listar Usuários", "Criar Usuário", "Atualizar Usuário", "Deletar Usuário"])
-
-
-# Listar Usuários
-if selection == "Listar Usuários":
-    st.title("Lista de Usuários")
-    # Cria uma instância da classe UserView
-    view = UserView()
-    #  Chamada ao método show_users do controlador
-    view.show_users()
+def main():
+    st.sidebar.title("Menu de Navegação")
+    page = st.sidebar.radio("Selecione a página:", ["Listar Usuários", "Cadastrar Usuário", "Editar Usuário", "Excluir Usuário"])
     
-        
+    view = UserView()
+    
+    if page == "Listar Usuários":
+        st.title("📋 Lista de Usuários")
+        view.show_users()
+    
+    elif page == "Cadastrar Usuário":
+        st.title("➕ Cadastrar Novo Usuário")
+        view.create_user_form()
+    
+    elif page == "Editar Usuário":
+        st.title("✏️ Editar Usuário")
+        view.update_user_form()
+    
+    elif page == "Excluir Usuário":
+        st.title("🗑️ Excluir Usuário")
+        view.delete_user_form()
+
+if __name__ == "__main__":
+    main()
