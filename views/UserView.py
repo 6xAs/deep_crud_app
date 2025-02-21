@@ -3,6 +3,7 @@ import streamlit as st
 from controllers.UserController import UserController
 
 class UserView:
+    # Inicializa o controlador
     def __init__(self):
         self.controller = UserController()
     
